@@ -5,59 +5,9 @@ import Browser exposing (UrlRequest)
 import Browser.Navigation exposing (Key)
 import Dict exposing (Dict)
 import Time
+import Types exposing (..)
 import Url exposing (Url)
-
-
-type Colour
-    = Blue
-    | Red
-
-
-type alias ID =
-    Int
-
-
-type alias Board =
-    Board.Board ID
-
-
-type alias Player =
-    { id : ID, name : String, playTime : Int, colour : Colour }
-
-
-type Model
-    = Start
-        { player1 : Player
-        , player2 : Player
-        }
-    | Playing
-        { player1 : Player
-        , player2 : Player
-        , board : Board
-        , error : Maybe String
-        , activePlayer : ID
-        }
-    | End
-        { player1 : Player
-        , player2 : Player
-        , winner : Player
-        , board : Board
-        }
-
-
-type alias Flags =
-    ()
-
-
-type Msg
-    = ChangeName ID String
-    | SwitchColour
-    | StartGame
-    | AttemptMove (Board.MoveRequest ID)
-    | Restart
-    | Reset
-    | Tick Time.Posix
-    | NoOp
+import View
 
 
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
@@ -139,7 +89,11 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every interval Tick
+    Sub.none
+
+
+
+-- Time.every interval Tick
 
 
 onUrlRequest : UrlRequest -> Msg
@@ -157,9 +111,9 @@ main =
     Browser.application
         { init = init
         , view =
-            \_ ->
+            \model ->
                 { title = "Connect 4"
-                , body = []
+                , body = View.view model
                 }
         , update = update
         , subscriptions = subscriptions
