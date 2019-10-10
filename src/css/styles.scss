@@ -2,6 +2,12 @@
 
 @tailwind components;
 
+.alert {
+  &--error {
+    @apply rounded text-red-100 bg-red-700 border-red-900 px-2 py-1 text-center;
+  }
+}
+
 .button {
   @apply py-2 px-3 text-blue-100 bg-blue-700 rounded border border-blue-900;
 
@@ -17,6 +23,16 @@
 
   &__text {
     @apply rounded border px-3 py-2 w-64;
+  }
+}
+
+.piece {
+  @apply w-8 h-8 rounded-full;
+  &--blue {
+    @apply bg-blue-500 border-blue-800 border;
+  }
+  &--red {
+    @apply bg-red-500 border-red-800 border;
   }
 }
 

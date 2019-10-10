@@ -17,6 +17,14 @@ type alias Board =
     Board.Board ID
 
 
+type alias Col =
+    Board.Col ID
+
+
+type alias MoveRequest =
+    Board.MoveRequest ID
+
+
 type alias Player =
     { id : ID, name : String, playTime : Int, colour : Colour }
 
@@ -58,7 +66,7 @@ type Msg
     = ChangeName ID String
     | SwitchColour
     | StartGame
-    | AttemptMove (Board.MoveRequest ID)
+    | AttemptMove MoveRequest
     | Restart
     | Reset
     | Tick Time.Posix

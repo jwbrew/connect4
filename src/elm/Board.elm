@@ -1,18 +1,19 @@
-module Board exposing (Board, MoveRequest, MoveResult(..), doMove, init)
+module Board exposing (Board, Col, MoveRequest(..), MoveResult(..), doMove, init)
 
+import Array exposing (Array)
 import Dict exposing (Dict)
 
 
-type Board comparable
-    = Board (Dict Int (Col comparable))
+type alias Board comparable =
+    Dict Int (Col comparable)
 
 
 type alias Col comparable =
-    List comparable
+    Array (Cell comparable)
 
 
 type MoveRequest comparable
-    = MoveRequest Int comparable
+    = MoveRequest comparable Int
 
 
 type MoveResult comparable
@@ -20,24 +21,31 @@ type MoveResult comparable
     | Invalid String
 
 
+type alias Cell comparable =
+    Maybe comparable
+
+
 init : Board comparable
 init =
     List.range 0 6
-        |> List.map (\x -> ( x, [] ))
+        |> List.map (\x -> ( x, Array.fromList [ Nothing, Nothing, Nothing, Nothing, Nothing, Nothing ] ))
         |> Dict.fromList
-        |> Board
 
 
 doMove : Board comparable -> MoveRequest comparable -> MoveResult comparable
-doMove (Board board) (MoveRequest col piece) =
-    case Dict.get col board of
-        Just [ a, b, c, d, e, f ] ->
-            Invalid "Column Full"
+doMove board (MoveRequest piece colIdx) =
+    case Dict.get colIdx board of
+        Just col ->
+            case Array.toList col |> List.filterMap identity |> List.length of
+                6 ->
+                    Invalid "Column Full"
 
-        Just xs ->
-            Dict.insert col (piece :: xs) board
-                |> Board
-                |> Valid
+                n ->
+                    let
+                        newCol =
+                            Array.set n (Just piece) col
+                    in
+                    Dict.insert colIdx newCol board |> Valid
 
         Nothing ->
             Invalid "Column Not Available"

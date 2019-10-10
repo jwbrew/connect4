@@ -61,10 +61,22 @@ update msg model =
         ( Tick _, Playing state ) ->
             case state.activePlayer of
                 1 ->
-                    ( Playing { state | player1 = (\p -> { p | playTime = p.playTime + interval }) state.player1 }, Cmd.none )
+                    ( Playing
+                        { state
+                            | player1 =
+                                (\p -> { p | playTime = p.playTime + interval }) state.player1
+                        }
+                    , Cmd.none
+                    )
 
                 2 ->
-                    ( Playing { state | player2 = (\p -> { p | playTime = p.playTime + interval }) state.player2 }, Cmd.none )
+                    ( Playing
+                        { state
+                            | player2 =
+                                (\p -> { p | playTime = p.playTime + interval }) state.player2
+                        }
+                    , Cmd.none
+                    )
 
                 _ ->
                     ( model, Cmd.none )
@@ -72,7 +84,19 @@ update msg model =
         ( AttemptMove request, Playing state ) ->
             case Board.doMove state.board request of
                 Board.Valid board ->
-                    ( Playing { state | board = board, error = Nothing }, Cmd.none )
+                    ( Playing
+                        { state
+                            | board = board
+                            , error = Nothing
+                            , activePlayer =
+                                if state.activePlayer == 1 then
+                                    2
+
+                                else
+                                    1
+                        }
+                    , Cmd.none
+                    )
 
                 Board.Invalid reason ->
                     ( Playing { state | error = Just reason }, Cmd.none )
