@@ -12,11 +12,9 @@ import View
 
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( End
+    ( Start
         { player1 = Player 1 "" 0 Blue
         , player2 = Player 2 "" 0 Red
-        , winner = Just 1
-        , board = Board.init
         }
     , Cmd.none
     )

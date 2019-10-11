@@ -64,7 +64,7 @@ boardActions model =
             (\idx _ ->
                 div [ class "w-16 h-16 flex justify-center items-center" ]
                     [ button
-                        [ Board.MoveRequest model.activePlayer idx |> AttemptMove |> onClick ]
+                        [ class "p-4", Board.MoveRequest model.activePlayer idx |> AttemptMove |> onClick ]
                         [ text "↓" ]
                     ]
             )
@@ -109,13 +109,15 @@ boardCell model maybeId =
 timers : Player -> Player -> Html Msg
 timers player1 player2 =
     div [ class "flex flex-col mt-6" ]
-        [ span []
-            [ span [ class "text-gray-600 text-sm uppercase" ] [ text "Player 1: " ]
-            , span [ class "text-lg w-48 inline-block" ] [ formatTime player1.playTime |> text ]
+        [ span [ class "flex items-center mb-2" ]
+            [ cellPiece player1
+            , span [ class "text-gray-600 text-sm uppercase ml-4" ] [ text <| player1.name ++ ": " ]
+            , span [ class "text-lg w-48 block ml-2" ] [ formatTime player1.playTime |> text ]
             ]
-        , span []
-            [ span [ class "text-gray-600 text-sm uppercase" ] [ text "Player 2: " ]
-            , span [ class "text-lg w-48 inline-block" ] [ formatTime player2.playTime |> text ]
+        , span [ class "flex items-center" ]
+            [ cellPiece player2
+            , span [ class "text-gray-600 text-sm uppercase ml-4" ] [ text <| player2.name ++ ": " ]
+            , span [ class "text-lg w-48 block ml-2" ] [ formatTime player2.playTime |> text ]
             ]
         ]
 
