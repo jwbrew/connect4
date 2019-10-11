@@ -93,7 +93,7 @@ boardActions model =
         |> Array.toList
         |> List.indexedMap
             (\idx _ ->
-                div [ class "w-16 h-16 flex justify-center items-center" ]
+                div [ class "board__action" ]
                     [ button
                         [ class "p-4", Board.MoveRequest model.activePlayer idx |> AttemptMove |> onClick ]
                         [ text "↓" ]
@@ -121,7 +121,7 @@ boardColumn model idx col =
 
 boardCell : { a | board : Board, player1 : Player, player2 : Player } -> Maybe ID -> Html Msg
 boardCell model maybeId =
-    div [ class "w-16 h-16 border flex justify-center items-center" ]
+    div [ class "board__cell" ]
         [ case maybeId of
             Just 1 ->
                 cellPiece model.player1
@@ -139,18 +139,18 @@ boardCell model maybeId =
 
 timers : Player -> Player -> Html Msg
 timers player1 player2 =
-    div [ class "flex flex-col mt-6" ]
-        [ span [ class "flex items-center mb-2" ]
+    div [ class "timers" ]
+        [ span [ class "timers__timer mb-2" ]
             [ cellPiece player1
-            , span [ class "text-gray-600 text-sm uppercase ml-4" ] [ text <| player1.name ++ ": " ]
-            , span [ class "text-lg w-48 block ml-2" ] [ formatTime player1.playTime |> text ]
-            , span [ class "ml-auto" ] [ text <| "Win Count: " ++ String.fromInt player1.wins ]
+            , span [ class "timers__name" ] [ text <| player1.name ++ ": " ]
+            , span [ class "timers__clock" ] [ formatTime player1.playTime |> text ]
+            , span [ class "timers__wincount" ] [ text <| "Win Count: " ++ String.fromInt player1.wins ]
             ]
-        , span [ class "flex items-center" ]
+        , span [ class "timers__timer" ]
             [ cellPiece player2
-            , span [ class "text-gray-600 text-sm uppercase ml-4" ] [ text <| player2.name ++ ": " ]
-            , span [ class "text-lg w-48 block ml-2" ] [ formatTime player2.playTime |> text ]
-            , span [ class "ml-auto" ] [ text <| "Win Count: " ++ String.fromInt player2.wins ]
+            , span [ class "timers__name" ] [ text <| player2.name ++ ": " ]
+            , span [ class "timers__clock" ] [ formatTime player2.playTime |> text ]
+            , span [ class "timers__wincount" ] [ text <| "Win Count: " ++ String.fromInt player2.wins ]
             ]
         ]
 
@@ -194,22 +194,22 @@ cellPiece player =
 
 endView : EndModel -> List (Html Msg)
 endView model =
-    [ div [ class "flex flex-col items-center" ]
+    [ div [ class "end" ]
         [ case model.winner of
             Just 1 ->
                 div [ class "flex flex-col items-center mb-3" ]
                     [ cellPiece model.player1
-                    , span [ class "text-2xl my-6" ] [ text <| model.player1.name ++ " Wins!" ]
+                    , span [ class "end__title" ] [ text <| model.player1.name ++ " Wins!" ]
                     ]
 
             Just 2 ->
                 div [ class "flex flex-col items-center mb-3" ]
                     [ cellPiece model.player2
-                    , span [ class "text-2xl my-6" ] [ text <| model.player2.name ++ " Wins!" ]
+                    , span [ class "end__title" ] [ text <| model.player2.name ++ " Wins!" ]
                     ]
 
             Nothing ->
-                span [ class "text-2xl mb-3" ] [ text "It's a Draw!" ]
+                span [ class "end__title" ] [ text "It's a Draw!" ]
 
             _ ->
                 text ""

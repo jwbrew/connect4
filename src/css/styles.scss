@@ -8,11 +8,27 @@
   }
 }
 
+.board {
+  &__action {
+    @apply w-16 h-16 flex justify-center items-center;
+  }
+  &__cell {
+    @apply w-16 h-16 border flex justify-center items-center;
+  }
+}
+
 .button {
   @apply py-2 px-3 text-blue-100 bg-blue-700 rounded border border-blue-900;
 
   &:disabled {
     @apply bg-blue-300 border-blue-400 cursor-not-allowed;
+  }
+}
+
+.end {
+  @apply flex flex-col items-center;
+  &__title {
+    @apply text-2xl my-6;
   }
 }
 
@@ -45,6 +61,22 @@
   }
   &--yellow {
     @apply bg-yellow-500 shadow border-yellow-400 border-2;
+  }
+}
+
+.timers {
+  @apply flex flex-col mt-6;
+  &__timer {
+    @apply flex items-center;
+  }
+  &__name {
+    @apply text-gray-600 text-sm uppercase ml-4;
+  }
+  &__clock {
+    @apply text-lg w-48 block ml-2;
+  }
+  &__wincount {
+    @apply text-lg block ml-auto;
   }
 }
 
