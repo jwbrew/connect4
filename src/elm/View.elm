@@ -6,6 +6,7 @@ import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Time
 import Types exposing (..)
 
 
@@ -43,11 +44,7 @@ startView model =
 
 playingView : PlayingModel -> List (Html Msg)
 playingView model =
-    let
-        board =
-            Dict.toList model.board |> List.map (boardColumn model) |> div [ class "flex" ]
-    in
-    [ div [ class "flex flex-col" ] <|
+    [ div [ class "flex flex-col items-center" ] <|
         [ case model.error of
             Just string ->
                 div [ class "alert--error mb-3" ] [ text string ]
@@ -55,23 +52,43 @@ playingView model =
             Nothing ->
                 text ""
         ]
-            ++ [ board ]
+            ++ [ boardActions model, board model, timers model.player1 model.player2 ]
     ]
 
 
-boardColumn : PlayingModel -> ( Int, Col ) -> Html Msg
-boardColumn model ( idx, col ) =
+boardActions : PlayingModel -> Html Msg
+boardActions model =
+    model.board
+        |> Array.toList
+        |> List.indexedMap
+            (\idx _ ->
+                div [ class "w-16 h-16 flex justify-center items-center" ]
+                    [ button
+                        [ Board.MoveRequest model.activePlayer idx |> AttemptMove |> onClick ]
+                        [ text "↓" ]
+                    ]
+            )
+        |> div [ class "flex" ]
+
+
+board : { a | board : Board, player1 : Player, player2 : Player } -> Html Msg
+board model =
+    model.board
+        |> Array.toList
+        |> List.indexedMap (boardColumn model)
+        |> div [ class "flex" ]
+
+
+boardColumn : { a | board : Board, player1 : Player, player2 : Player } -> Int -> Col -> Html Msg
+boardColumn model idx col =
     let
         cells =
             col |> Array.toList |> List.map (boardCell model)
-
-        action =
-            button [ Board.MoveRequest model.activePlayer idx |> AttemptMove |> onClick ] [ text "↓" ]
     in
-    div [ class "flex flex-col-reverse" ] (cells ++ [ action ])
+    div [ class "flex flex-col-reverse" ] cells
 
 
-boardCell : PlayingModel -> Maybe ID -> Html Msg
+boardCell : { a | board : Board, player1 : Player, player2 : Player } -> Maybe ID -> Html Msg
 boardCell model maybeId =
     div [ class "w-16 h-16 border flex justify-center items-center" ]
         [ case maybeId of
@@ -89,6 +106,35 @@ boardCell model maybeId =
         ]
 
 
+timers : Player -> Player -> Html Msg
+timers player1 player2 =
+    div [ class "flex flex-col mt-6" ]
+        [ span []
+            [ span [ class "text-gray-600 text-sm uppercase" ] [ text "Player 1: " ]
+            , span [ class "text-lg w-48 inline-block" ] [ formatTime player1.playTime |> text ]
+            ]
+        , span []
+            [ span [ class "text-gray-600 text-sm uppercase" ] [ text "Player 2: " ]
+            , span [ class "text-lg w-48 inline-block" ] [ formatTime player2.playTime |> text ]
+            ]
+        ]
+
+
+formatTime : Int -> String
+formatTime int =
+    let
+        time =
+            Time.millisToPosix int
+    in
+    String.fromInt (Time.toHour Time.utc time)
+        ++ ":"
+        ++ String.fromInt (Time.toMinute Time.utc time)
+        ++ ":"
+        ++ String.fromInt (Time.toSecond Time.utc time)
+        ++ ":"
+        ++ String.fromInt (Time.toMillis Time.utc time)
+
+
 cellPiece : Player -> Html Msg
 cellPiece player =
     case player.colour of
@@ -101,4 +147,30 @@ cellPiece player =
 
 endView : EndModel -> List (Html Msg)
 endView model =
-    [ text "End" ]
+    [ div [ class "flex flex-col items-center" ]
+        [ case model.winner of
+            Just 1 ->
+                div [ class "flex flex-col items-center mb-3" ]
+                    [ cellPiece model.player1
+                    , span [ class "text-2xl my-6" ] [ text <| model.player1.name ++ " Wins!" ]
+                    ]
+
+            Just 2 ->
+                div [ class "flex flex-col items-center mb-3" ]
+                    [ cellPiece model.player2
+                    , span [ class "text-2xl my-6" ] [ text <| model.player2.name ++ " Wins!" ]
+                    ]
+
+            Nothing ->
+                span [ class "text-2xl mb-3" ] [ text "It's a Draw!" ]
+
+            _ ->
+                text ""
+        , board model
+        , timers model.player1 model.player2
+        , div [ class "flex mt-6" ]
+            [ button [ onClick Reset, class "button mr-2" ] [ text "Reset" ]
+            , button [ onClick Restart, class "button" ] [ text "Restart" ]
+            ]
+        ]
+    ]

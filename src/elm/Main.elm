@@ -12,9 +12,11 @@ import View
 
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( Start
+    ( End
         { player1 = Player 1 "" 0 Blue
         , player2 = Player 2 "" 0 Red
+        , winner = Just 1
+        , board = Board.init
         }
     , Cmd.none
     )
@@ -101,11 +103,44 @@ update msg model =
                 Board.Invalid reason ->
                     ( Playing { state | error = Just reason }, Cmd.none )
 
+                Board.Draw board ->
+                    ( End
+                        { player1 = state.player1
+                        , player2 = state.player2
+                        , winner = Nothing
+                        , board = board
+                        }
+                    , Cmd.none
+                    )
+
+                Board.Winner board winner ->
+                    ( End
+                        { player1 = state.player1
+                        , player2 = state.player2
+                        , winner = Just winner
+                        , board = board
+                        }
+                    , Cmd.none
+                    )
+
         ( Restart, End state ) ->
-            ( model, Cmd.none )
+            ( Playing
+                { player1 = state.player1
+                , player2 = state.player2
+                , board = Board.init
+                , activePlayer = 1
+                , error = Nothing
+                }
+            , Cmd.none
+            )
 
         ( Reset, End state ) ->
-            ( model, Cmd.none )
+            ( Start
+                { player1 = Player 1 "" 0 Blue
+                , player2 = Player 2 "" 0 Red
+                }
+            , Cmd.none
+            )
 
         _ ->
             ( model, Cmd.none )
@@ -113,11 +148,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
-
-
-
--- Time.every interval Tick
+    Time.every interval Tick
 
 
 onUrlRequest : UrlRequest -> Msg

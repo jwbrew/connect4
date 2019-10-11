@@ -53,7 +53,7 @@ type alias PlayingModel =
 type alias EndModel =
     { player1 : Player
     , player2 : Player
-    , winner : Player
+    , winner : Maybe ID
     , board : Board
     }
 

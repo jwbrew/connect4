@@ -27,12 +27,12 @@
 }
 
 .piece {
-  @apply w-8 h-8 rounded-full;
+  @apply w-12 h-12 rounded-full;
   &--blue {
-    @apply bg-blue-500 border-blue-800 border;
+    @apply bg-blue-500 shadow border-blue-400 border-2;
   }
   &--red {
-    @apply bg-red-500 border-red-800 border;
+    @apply bg-red-500 shadow border-red-400 border-2;
   }
 }
 
