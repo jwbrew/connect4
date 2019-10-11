@@ -28,10 +28,30 @@ view model =
 startView : StartModel -> List (Html Msg)
 startView model =
     [ div [ class "flex flex-col text-center items-center" ]
-        [ label [ class "input__label" ] [ text "Player 1 Name" ]
-        , input [ class "input__text mb-3", type_ "text", value model.player1.name, ChangeName 1 |> onInput ] []
-        , label [ class "input__label" ] [ text "Player 2 Name" ]
-        , input [ class "input__text mb-3", type_ "text", value model.player2.name, ChangeName 2 |> onInput ] []
+        [ label [ class "input__label" ] [ text "Player 1" ]
+        , div [ class "flex items-center mb-3" ]
+            [ input
+                [ class "input__text mr-3"
+                , type_ "text"
+                , value model.player1.name
+                , ChangeName 1 |> onInput
+                , placeholder "Name"
+                ]
+                []
+            , a [ onClick <| ChangeColour 1, class "cursor-pointer" ] [ cellPiece model.player1 ]
+            ]
+        , label [ class "input__label" ] [ text "Player 2" ]
+        , div [ class "flex items-center mb-3" ]
+            [ input
+                [ class "input__text mr-3"
+                , type_ "text"
+                , value model.player2.name
+                , ChangeName 2 |> onInput
+                , placeholder "Name"
+                ]
+                []
+            , a [ onClick <| ChangeColour 2, class "cursor-pointer" ] [ cellPiece model.player2 ]
+            ]
         , button
             [ disabled <| model.player1.name == "" || model.player2.name == ""
             , onClick StartGame
@@ -145,6 +165,18 @@ cellPiece player =
 
         Red ->
             div [ class "piece piece--red" ] []
+
+        Pink ->
+            div [ class "piece piece--pink" ] []
+
+        Yellow ->
+            div [ class "piece piece--yellow" ] []
+
+        Purple ->
+            div [ class "piece piece--purple" ] []
+
+        Green ->
+            div [ class "piece piece--green" ] []
 
 
 endView : EndModel -> List (Html Msg)

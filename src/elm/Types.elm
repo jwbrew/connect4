@@ -7,6 +7,10 @@ import Time
 type Colour
     = Blue
     | Red
+    | Pink
+    | Purple
+    | Green
+    | Yellow
 
 
 type alias ID =
@@ -64,6 +68,7 @@ type alias Flags =
 
 type Msg
     = ChangeName ID String
+    | ChangeColour ID
     | SwitchColour
     | StartGame
     | AttemptMove MoveRequest

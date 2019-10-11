@@ -24,6 +24,39 @@ interval =
     1
 
 
+cycleColour : Player -> Player -> Player
+cycleColour player otherPlayer =
+    let
+        newPlayer =
+            { player
+                | colour =
+                    case player.colour of
+                        Blue ->
+                            Red
+
+                        Red ->
+                            Pink
+
+                        Pink ->
+                            Purple
+
+                        Purple ->
+                            Green
+
+                        Green ->
+                            Yellow
+
+                        Yellow ->
+                            Blue
+            }
+    in
+    if newPlayer.colour == otherPlayer.colour then
+        cycleColour newPlayer otherPlayer
+
+    else
+        newPlayer
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
@@ -34,6 +67,17 @@ update msg model =
 
                 2 ->
                     ( Start { players | player2 = (\p -> { p | name = name }) players.player2 }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ( ChangeColour id, Start players ) ->
+            case id of
+                1 ->
+                    ( Start { players | player1 = cycleColour players.player1 players.player2 }, Cmd.none )
+
+                2 ->
+                    ( Start { players | player2 = cycleColour players.player2 players.player1 }, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
