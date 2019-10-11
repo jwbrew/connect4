@@ -72,7 +72,18 @@ playingView model =
             Nothing ->
                 text ""
         ]
-            ++ [ boardActions model, board model, timers model.player1 model.player2 ]
+            ++ [ boardActions model
+               , board model
+               , if model.activePlayer == 1 then
+                    span [ class "text-lg mt-3 font-semibold" ] [ text <| model.player1.name ++ " to move" ]
+
+                 else
+                    span [ class "text-lg mt-3 font-semibold" ]
+                        [ text <| model.player2.name ++ " to move" ]
+               , timers
+                    model.player1
+                    model.player2
+               ]
     ]
 
 
