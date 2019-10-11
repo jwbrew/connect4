@@ -30,7 +30,7 @@ type alias MoveRequest =
 
 
 type alias Player =
-    { id : ID, name : String, playTime : Int, colour : Colour }
+    { id : ID, name : String, playTime : Int, colour : Colour, wins : Int }
 
 
 type Model

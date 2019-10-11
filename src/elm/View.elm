@@ -133,11 +133,13 @@ timers player1 player2 =
             [ cellPiece player1
             , span [ class "text-gray-600 text-sm uppercase ml-4" ] [ text <| player1.name ++ ": " ]
             , span [ class "text-lg w-48 block ml-2" ] [ formatTime player1.playTime |> text ]
+            , span [ class "ml-auto" ] [ text <| "Win Count: " ++ String.fromInt player1.wins ]
             ]
         , span [ class "flex items-center" ]
             [ cellPiece player2
             , span [ class "text-gray-600 text-sm uppercase ml-4" ] [ text <| player2.name ++ ": " ]
             , span [ class "text-lg w-48 block ml-2" ] [ formatTime player2.playTime |> text ]
+            , span [ class "ml-auto" ] [ text <| "Win Count: " ++ String.fromInt player2.wins ]
             ]
         ]
 

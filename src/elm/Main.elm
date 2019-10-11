@@ -13,8 +13,8 @@ import View
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
 init flags url key =
     ( Start
-        { player1 = Player 1 "" 0 Blue
-        , player2 = Player 2 "" 0 Red
+        { player1 = Player 1 "" 0 Blue 0
+        , player2 = Player 2 "" 0 Red 0
         }
     , Cmd.none
     )
@@ -57,19 +57,28 @@ cycleColour player otherPlayer =
         newPlayer
 
 
+updatePlayer :
+    (Player -> Player)
+    -> ID
+    -> { a | player1 : Player, player2 : Player }
+    -> { a | player1 : Player, player2 : Player }
+updatePlayer function id model =
+    case id of
+        1 ->
+            { model | player1 = function model.player1 }
+
+        2 ->
+            { model | player2 = function model.player2 }
+
+        _ ->
+            model
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
         ( ChangeName id name, Start players ) ->
-            case id of
-                1 ->
-                    ( Start { players | player1 = (\p -> { p | name = name }) players.player1 }, Cmd.none )
-
-                2 ->
-                    ( Start { players | player2 = (\p -> { p | name = name }) players.player2 }, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
+            ( updatePlayer (\p -> { p | name = name }) id players |> Start, Cmd.none )
 
         ( ChangeColour id, Start players ) ->
             case id of
@@ -103,27 +112,7 @@ update msg model =
             )
 
         ( Tick _, Playing state ) ->
-            case state.activePlayer of
-                1 ->
-                    ( Playing
-                        { state
-                            | player1 =
-                                (\p -> { p | playTime = p.playTime + interval }) state.player1
-                        }
-                    , Cmd.none
-                    )
-
-                2 ->
-                    ( Playing
-                        { state
-                            | player2 =
-                                (\p -> { p | playTime = p.playTime + interval }) state.player2
-                        }
-                    , Cmd.none
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
+            ( updatePlayer (\p -> { p | playTime = p.playTime + interval }) state.activePlayer state |> Playing, Cmd.none )
 
         ( AttemptMove request, Playing state ) ->
             case Board.doMove state.board request of
@@ -156,12 +145,13 @@ update msg model =
                     )
 
                 Board.Winner board winner ->
-                    ( End
-                        { player1 = state.player1
-                        , player2 = state.player2
-                        , winner = Just winner
-                        , board = board
-                        }
+                    ( { player1 = state.player1
+                      , player2 = state.player2
+                      , winner = Just winner
+                      , board = board
+                      }
+                        |> updatePlayer (\p -> { p | wins = p.wins + 1 }) winner
+                        |> End
                     , Cmd.none
                     )
 
@@ -178,8 +168,8 @@ update msg model =
 
         ( Reset, End state ) ->
             ( Start
-                { player1 = Player 1 "" 0 Blue
-                , player2 = Player 2 "" 0 Red
+                { player1 = Player 1 "" 0 Blue 0
+                , player2 = Player 2 "" 0 Red 0
                 }
             , Cmd.none
             )
